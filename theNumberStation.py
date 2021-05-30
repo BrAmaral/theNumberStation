@@ -1,6 +1,5 @@
 #Imports
 import os           # For OS command execution
-import msvcrt      # For the getch method
 
 #Functions
 def printMenu():
@@ -49,10 +48,13 @@ def printDecodeInstructions():
 """)
 
 def clearScreen():
-    os.system('cls')
+    if os.name == 'nt':
+        os.system('cls')
+    else:
+        os.system('clear')
 
-def wait():
-    msvcrt.getch()
+def waitUserInput():
+    input()
 
 def menu():
     inp = True
@@ -78,7 +80,7 @@ def menu():
             clearScreen()
             print("The input is not valid, please try again.")
             print("Press any key...")
-            wait()
+            waitUserInput()
             clearScreen()
 
 def encodeMessage():
@@ -90,22 +92,22 @@ def encodeMessage():
     
     pad = list(str(input("\nEnter your pad: ")).encode('ascii'))
     
-    codephrase = str(input("Enter the Codephrase: "))
-    
     if len(message) == len(pad):
+        codephrase = str(input("Enter the Codephrase: "))
         print(codephrase, end=" ")
         calculateNumbers(message, pad)
     else:
+        clearScreen()
         print("The pad length is: " + str(len(pad)))
         print("\nThe message and the pad does not have the same length. Please try again...")
         print("Press any key...")
-        wait()
+        waitUserInput()
         encodeMessage()
 
 def decodeMessage():
     clearScreen()
     printDecodeInstructions()
-    codedMessage = input("\nEnter the message numbers: ").split()
+    codedMessage = input("\nEnter the numbers: ").split()
     codedMessage = [int(i) for i in codedMessage]
     pad = list(str(input("\nEnter your pad: ")).encode('ascii'))
 
@@ -114,7 +116,7 @@ def decodeMessage():
     else:
         print("\nThe numbers and the pad does not have the same length. Please try again...")
         print("Press any key...")
-        wait()
+        waitUserInput()
         decodeMessage()
 
 def calculateNumbers(message, pad):
