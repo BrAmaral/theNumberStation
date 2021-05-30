@@ -107,13 +107,16 @@ def encodeMessage():
 def decodeMessage():
     clearScreen()
     printDecodeInstructions()
+
     codedMessage = input("\nEnter the numbers: ").split()
+    print("The message length is: " + str(len(codedMessage)))
     codedMessage = [int(i) for i in codedMessage]
     pad = list(str(input("\nEnter your pad: ")).encode('ascii'))
 
     if len(codedMessage) == len(pad):
         calculateNumbersReverse(codedMessage, pad)
     else:
+        print("The pad length is: " + str(len(pad)))
         print("\nThe numbers and the pad does not have the same length. Please try again...")
         print("Press any key...")
         waitUserInput()
