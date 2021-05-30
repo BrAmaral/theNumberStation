@@ -34,9 +34,7 @@ I do believe theNumberStation can help you with the first kind problem Schneier 
 
 ### Requirements
 
-You must have python 3.x installed in your machine. Please visit https://www.python.org/ for instructions, if necessary.
-
-Also, when installing, check the **add Python to the PATH variable** box (if you are installing it in **Windows**).
+- Python 3.x
 
 ### Basic usage
 
