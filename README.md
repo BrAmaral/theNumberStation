@@ -1,6 +1,6 @@
 # theNumberStation
 ![theNumberStation-Example](Images/theNumberStation-Example.jpg)
-**theNumberStation** is a Python program that implements the One-Time Pad concept described by [Gilbert Vernam](https://en.wikipedia.org/wiki/Gilbert_Vernam) and [Joseph Mauborgne](https://en.wikipedia.org/wiki/Joseph_Mauborgne). In theory, the cipher is unbreakable if the following rules are respected:
+**theNumberStation** is a Python program that implements the [One-Time Pad](https://en.wikipedia.org/wiki/One-time_pad) concept described by [Gilbert Vernam](https://en.wikipedia.org/wiki/Gilbert_Vernam) and [Joseph Mauborgne](https://en.wikipedia.org/wiki/Joseph_Mauborgne). In theory, the cipher is unbreakable if the following rules are respected:
 
 - The One-Time Pad should consist of random characters;
 - The One-Time Pad should have the same length as the message;
