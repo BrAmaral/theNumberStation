@@ -99,6 +99,7 @@ def menu():
             print("Press any key...")
             waitUserInput()
             clearScreen()
+            menu()
 
 def encodeMessage():
     clearScreen()
