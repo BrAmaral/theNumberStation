@@ -1,5 +1,6 @@
 #Imports
 import os           # For OS command execution
+import secrets
 
 #Functions
 def printMenu():
@@ -16,7 +17,8 @@ def printMenu():
 
         1 - Encode Message
         2 - Decode Message
-        3 - Exit
+        3 - Generate One-Time Pad
+        4 - Exit
 
         """)
 
@@ -33,7 +35,7 @@ def printEncodeInstructions():
 
 4) The pad uses ASCII chars only! Check the ASCII table.
 
-5) The pad must be somewhat random. Using books or magazines segments is a viable option.
+5) The pad must be somewhat random. Using books or magazines segments is a viable option. You can also use the One-Time Pad generator (option 3 in the menu)
 
 
 """)
@@ -46,6 +48,19 @@ def printDecodeInstructions():
 1) Paste only the numbers equivalent to the message, discard the CODEPHRASE (and any number related to it, if any)
 
 """)
+
+def generateOTP():
+    count = 1
+    count2 = 1
+    for x in range(525):
+        otp = secrets.randbelow(10)
+        print(otp, end='')
+        if count == 5:
+            print(' ', end='')
+            count = 0
+        count += 1
+    print("\n\nPress any key to continue...")
+    waitUserInput()
 
 def clearScreen():
     if os.name == 'nt':
@@ -72,6 +87,9 @@ def menu():
             decodeMessage()
 
         elif inp == "3":
+            generateOTP()
+
+        elif inp == "4":
             clearScreen()
             print(" ▌║█║▌│║▌│║▌║▌█║End of Transmission ▌│║▌║▌│║║▌█║▌║█\n\n")
             inp = None
