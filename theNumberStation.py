@@ -51,7 +51,6 @@ def printDecodeInstructions():
 
 def generateOTP():
     count = 1
-    count2 = 1
     for x in range(525):
         otp = secrets.randbelow(10)
         print(otp, end='')
@@ -145,13 +144,13 @@ def calculateNumbers(message, pad):
     for loop in message:
         #Bug --- The print is showing in the menu for some reason... it will become a feature
         print((loop - pad[index])%127, end=' ')
-        index = index + 1
+        index +=1
 
 def calculateNumbersReverse(codedMessage, pad):
     index = 0
     for loop in codedMessage:
         print(chr((loop + pad[index])%127), end = '')
-        index = index + 1
+        index += 1
 
 #Main Function
 def main():
