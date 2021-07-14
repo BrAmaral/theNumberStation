@@ -52,8 +52,7 @@ def printDecodeInstructions():
 def generateOTP():
     count = 1
     for x in range(525):
-        otp = secrets.randbelow(10)
-        print(otp, end='')
+        print(secrets.randbelow(10), end='')
         if count == 5:
             print(' ', end='')
             count = 0
