@@ -1,0 +1,4 @@
+flask==3.0.2
+kokoro>=0.7.0
+soundfile==0.12.1
+numpy<2.0.0

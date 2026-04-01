@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TERMINAL: AMBER-P3 // PROJECT ECHELON</title>
+    <style>
+        :root { 
+            --amber: #ffb000; 
+            --amber-dim: #946700; 
+            --bg: #0d0900; 
+            --glow: 0 0 10px rgba(255, 176, 0, 0.4);
+        }
+        
+        body {
+            background-color: var(--bg);
+            color: var(--amber);
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0; padding: 20px;
+            text-transform: uppercase;
+            overflow-x: hidden;
+        }
+
+        /* CRT Overlay Scanlines */
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.05));
+            background-size: 100% 3px, 3px 100%;
+            z-index: 10; pointer-events: none;
+        }
+
+        .container {
+            max-width: 900px; margin: auto;
+            border: 1px solid var(--amber);
+            padding: 30px; position: relative;
+            box-shadow: inset 0 0 20px rgba(255, 176, 0, 0.2), var(--glow);
+            animation: flicker 0.15s infinite;
+        }
+
+        .header { border-bottom: 3px double var(--amber); margin-bottom: 20px; padding-bottom: 10px; }
+        .top-secret { color: #000; background: var(--amber); padding: 2px 10px; font-weight: bold; }
+
+        label { display: block; margin-top: 15px; font-weight: bold; font-size: 0.9em; }
+
+        textarea, select, input {
+            width: 100%; background: #1a1200; border: 1px solid var(--amber);
+            color: var(--amber); padding: 12px; font-family: inherit; margin-top: 10px;
+            box-sizing: border-box; outline: none; resize: vertical; max-width: 100%;
+        }
+
+        textarea:focus, input:focus { box-shadow: var(--glow); }
+
+        .btn-group { display: flex; gap: 10px; margin-top: 20px; }
+        button {
+            flex: 1; background: var(--amber); color: #000; border: none;
+            padding: 15px; font-weight: bold; cursor: pointer; font-family: inherit;
+        }
+        button:hover { background: #ffd04d; }
+
+        .voice-controls { display: flex; gap: 10px; margin-top: 10px; }
+        .voice-btn { 
+            background: transparent; color: var(--amber); border: 1px solid var(--amber); 
+            flex: 1; display: none; padding: 10px; font-size: 0.8em;
+        }
+        .voice-btn:hover { background: rgba(255, 176, 0, 0.1); }
+
+        .output-box {
+            background: #1a1200; border: 1px dashed var(--amber);
+            padding: 20px; min-height: 80px; margin-top: 20px; position: relative;
+        }
+
+        #burn-timer { color: #ff3300; font-weight: bold; float: right; }
+        .metadata { font-size: 0.75em; color: var(--amber-dim); margin-top: 8px; }
+        .counter { font-size: 0.8em; color: var(--amber-dim); }
+
+        /* High-Intensity CRT Flicker Animation */
+        @keyframes flicker {
+            0% { opacity: 0.993; }
+            5% { opacity: 0.96; }
+            10% { opacity: 0.99; }
+            15% { opacity: 0.982; }
+            25% { opacity: 0.991; }
+            50% { opacity: 0.995; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+<div class="overlay"></div>
+
+<div class="container">
+    <div class="header">
+        <span class="top-secret">TOP SECRET // PROJECT ECHELON</span>
+        <h2 style="margin: 10px 0;">AMBER-P3 STRATEGIC TERMINAL</h2>
+        <div id="zulu-clock">ZULU TIME: --:--:--</div>
+    </div>
+
+    <div>
+        <label>ACTIVE ENCRYPTION PROTOCOL (5-UNIT OFFSETS):</label>
+        <select id="protocol">
+            <option value="ASCENSION">PROTOCOL: ASCENSION </option>
+            <option value="VORKUTA">PROTOCOL: VORKUTA </option>
+            <option value="ECHELON">PROTOCOL: ECHELON </option>
+            <option value="RAINBOW">PROTOCOL: RAINBOW </option>
+            <option value="PHOENIX">PROTOCOL: PHOENIX </option>
+        </select>
+        <button onclick="generatePad()" style="margin-top:15px;">GENERATE 500-UNIT MASTER PAD</button>
+        <textarea id="padDisplay" rows="2" readonly placeholder="MASTER PAD DATA WILL APPEAR HERE..."></textarea>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 25px;">
+        <label id="input-label">INPUT TRANSMISSION DATA:</label>
+        <div id="char-count" class="counter">0 CHARACTERS</div>
+    </div>
+    <textarea id="mainInput" rows="5" oninput="updateCounter()" placeholder="ENTER MESSAGE TO BROADCAST OR NUMERIC INTERCEPT..."></textarea>
+    
+    <label>MASTER PAD (SECRET KEY):</label>
+    <input type="password" id="activePad" placeholder="PASTE MASTER PAD HERE (INPUT IS MASKED)">
+
+    <div class="btn-group">
+        <button onclick="sendAction('encode')">START BROADCAST</button>
+        <button onclick="sendAction('decode')">DECODE INTERCEPT</button>
+    </div>
+
+    <div class="output-box">
+        <span id="burn-timer"></span>
+        <div id="result">AWAITING SIGNAL...</div>
+        <div class="voice-controls">
+            <button id="playBtn" class="voice-btn" onclick="playAudio()">▶ VOICE BROADCAST (BRITISH)</button>
+            <button id="saveBtn" class="voice-btn" onclick="saveAudio()">💾 SAVE TRANSMISSION</button>
+        </div>
+        <div id="meta" class="metadata"></div>
+    </div>
+</div>
+
+<audio id="ttsAudio"></audio>
+
+<script>
+    let currentBlobUrl = null;
+
+    // Zulu Time Logic (UTC)
+    setInterval(() => {
+        const now = new Date();
+        document.getElementById('zulu-clock').innerText = "ZULU TIME: " + now.toISOString().split('T')[1].split('.')[0] + "Z";
+    }, 1000);
+
+    // Context-Aware Counter & Protocol Detection
+    function updateCounter() {
+        const input = document.getElementById('mainInput').value.trim();
+        const counter = document.getElementById('char-count');
+        const label = document.getElementById('input-label');
+        
+        if (input.length === 0) {
+            counter.innerText = "0 CHARACTERS";
+            label.innerText = "INPUT TRANSMISSION DATA:";
+            return;
+        }
+
+        // Detect if input is a numeric intercept starting with a Protocol Code
+        if (/^[a-zA-Z]/.test(input)) {
+            const firstWord = input.split(' ')[0].toUpperCase();
+            const protocols = ["ASCENSION", "VORKUTA", "ECHELON", "RAINBOW", "PHOENIX"];
+            if (protocols.includes(firstWord)) {
+                label.innerText = "INTERCEPT DETECTED:";
+                const groups = input.split(/\s+/).length - 1; // Subtract 1 for the protocol name
+                counter.innerText = `${groups} GROUPS DETECTED`;
+            } else {
+                label.innerText = "CLEAR-TEXT MESSAGE:";
+                counter.innerText = `${input.length} CHARACTERS`;
+            }
+        } else {
+            label.innerText = "CLEAR-TEXT MESSAGE:";
+            counter.innerText = `${input.length} CHARACTERS`;
+        }
+    }
+
+    async function generatePad() {
+        const res = await fetch('/generate', { 
+            method: 'POST', 
+            headers: {'Content-Type': 'application/json'}, 
+            body: JSON.stringify({length: 500}) 
+        });
+        const data = await res.json();
+        document.getElementById('padDisplay').value = data.pad;
+    }
+
+    async function sendAction(type) {
+        const input = document.getElementById('mainInput').value;
+        const pad = document.getElementById('activePad').value;
+        const protocol = document.getElementById('protocol').value;
+        const endpoint = type === 'encode' ? '/broadcast' : '/decode';
+
+        const res = await fetch(endpoint, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ message: input, pad: pad, protocol: protocol })
+        });
+        
+        const data = await res.json();
+        const resultElem = document.getElementById('result');
+        const metaElem = document.getElementById('meta');
+
+        if (data.error) {
+            resultElem.style.color = "#ff3300";
+            resultElem.innerText = "[!] ERROR: " + data.error;
+            metaElem.innerText = "";
+            document.getElementById('playBtn').style.display = "none";
+            document.getElementById('saveBtn').style.display = "none";
+        } else {
+            resultElem.style.color = "var(--amber)";
+            resultElem.innerText = data.result;
+            metaElem.innerText = `ID: ${data.origin} | ZULU: ${data.timestamp}`;
+            
+            // Initiate voice synthesis for the result
+            prepareVoice(data.result);
+            startBurnTimer();
+        }
+    }
+
+    async function prepareVoice(text) {
+        const playBtn = document.getElementById('playBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        playBtn.innerText = "⌛ SYNTHESIZING VOICE...";
+        playBtn.style.display = "block";
+
+        const res = await fetch('/synthesize', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ text: text })
+        });
+
+        if (res.ok) {
+            const blob = await res.blob();
+            // Revoke old URL to manage memory
+            if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
+            currentBlobUrl = URL.createObjectURL(blob);
+            document.getElementById('ttsAudio').src = currentBlobUrl;
+            playBtn.innerText = "▶ VOICE BROADCAST";
+            saveBtn.style.display = "block";
+        } else {
+            playBtn.innerText = "⚠️ VOICE ENGINE OFFLINE";
+        }
+    }
+
+    function playAudio() { 
+        document.getElementById('ttsAudio').play(); 
+    }
+    
+    function saveAudio() {
+        if (!currentBlobUrl) return;
+        const a = document.createElement('a');
+        a.href = currentBlobUrl;
+        a.download = "echelon_transmission.wav";
+        a.click();
+    }
+
+    function startBurnTimer() {
+        let timeLeft = 30;
+        const timerElem = document.getElementById('burn-timer');
+        if (window.burnInterval) clearInterval(window.burnInterval);
+
+        window.burnInterval = setInterval(() => {
+            timeLeft -= 1;
+            timerElem.innerText = `BURN: ${timeLeft}S`;
+            if (timeLeft <= 0) {
+                clearInterval(window.burnInterval);
+                document.getElementById('result').innerText = "[DATA PURGED]";
+                document.getElementById('meta').innerText = "";
+                document.getElementById('playBtn').style.display = "none";
+                document.getElementById('saveBtn').style.display = "none";
+                if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
+                timerElem.innerText = "";
+            }
+        }, 1000);
+    }
+</script>
+</body>
+</html>
