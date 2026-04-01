@@ -5,6 +5,7 @@ theNumberStation is a mathematically "perfect" communication terminal designed t
 > ### ⚠️ DISCLAIMER
 > **FOR SIMULATION PURPOSES ONLY.** This project was developed as a thematic and educational exercise ("for fun"). While the underlying mathematics of the One-Time Pad are cryptographically sound, this implementation has not been audited for high-stakes security environments. Do not use this software for the transmission of sensitive, real-world data or in life-critical situations.
 
+![image](images/image.png)
 
 ## 🛠 KEY FEATURES
 
